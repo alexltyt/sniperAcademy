@@ -1,0 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Scope : MonoBehaviour
+{
+    public Animator animator;
+
+    public GameObject scopeOverlay;
+    public GameObject weaponCamera;
+    public Camera mainCamera;
+    public float scopedFOV = 15f;
+    private float normalFOV;
+
+    private bool isScoped = false;
+
+    void Update()
+    {
+        if (Input.GetButtonDown("Fire2") || Input.touchCount >= 1)
+        {
+            isScoped = !isScoped;
+            animator.SetBool("Scoped", isScoped);
+
+
+            if (isScoped)
+                StartCoroutine(OnScope());
+            else
+                OnUnscoped();
+        }
+    }
+
+    void OnUnscoped()
+    {
+        scopeOverlay.SetActive(false);
+        weaponCamera.SetActive(true);
+        mainCamera.fieldOfView = normalFOV;
+    }
+    IEnumerator OnScope()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        scopeOverlay.SetActive(true);
+        weaponCamera.SetActive(false);
+        normalFOV = mainCamera.fieldOfView;
+        mainCamera.fieldOfView = 15f;
+    }
+}
